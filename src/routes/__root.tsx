@@ -357,6 +357,9 @@ function RootDocument({ children }: { children: React.ReactNode }) {
           }}
         />
         <script dangerouslySetInnerHTML={{ __html: wrapInlineScript(themeScript) }} />
+        {/* CP7 CUSTOM: static manifest link for PWA installability */}
+        <link rel="manifest" href="/manifest.json" />
+        <meta name="theme-color" content="#6366F1" />
         <HeadContent />
         <script
           dangerouslySetInnerHTML={{ __html: wrapInlineScript(themeColorScript) }}
