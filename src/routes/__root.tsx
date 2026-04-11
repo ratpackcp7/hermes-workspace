@@ -254,6 +254,13 @@ function RootLayout() {
   useEffect(() => {
     initializeSettingsAppearance()
 
+    // CP7 CUSTOM: Register pass-through SW for PWA install support (no caching)
+    if (typeof window !== 'undefined' && 'serviceWorker' in navigator) {
+      navigator.serviceWorker.register('/sw.js').catch((err) => {
+        console.warn('SW registration failed:', err)
+      })
+    }
+
     const syncOnboardingCompletion = () => {
       try {
         setOnboardingComplete(localStorage.getItem(ONBOARDING_KEY) === 'true')

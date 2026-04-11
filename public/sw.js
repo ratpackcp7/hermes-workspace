@@ -1,24 +1,15 @@
-// Hermes Workspace Service Worker — DISABLED
-// Unregisters itself and clears all caches to prevent stale asset issues
-// after Docker image updates or reverse proxy deployments.
+// Hermes Workspace Service Worker — PWA pass-through
+// Satisfies Chrome PWA install criteria without caching anything.
+// All requests go straight to network — no stale asset risk.
 
 self.addEventListener('install', () => {
   self.skipWaiting()
 })
 
 self.addEventListener('activate', (event) => {
-  event.waitUntil(
-    caches
-      .keys()
-      .then((names) => Promise.all(names.map((name) => caches.delete(name))))
-      .then(() => self.clients.claim())
-      .then(() => {
-        // Tell all open tabs to reload so they get fresh assets
-        self.clients.matchAll({ type: 'window' }).then((clients) => {
-          clients.forEach((client) => client.navigate(client.url))
-        })
-      }),
-  )
+  event.waitUntil(self.clients.claim())
 })
 
-// Don't intercept any fetches — let the browser/server handle everything
+self.addEventListener('fetch', (event) => {
+  event.respondWith(fetch(event.request))
+})
