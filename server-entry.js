@@ -124,6 +124,24 @@ const httpServer = createServer(async (req, res) => {
     `http://${req.headers.host || 'localhost'}`,
   )
 
+  // Handle /api/start-hermes (production endpoint — not in Vite middleware)
+  if (req.method === 'POST' && url.pathname === '/api/start-hermes') {
+    const hermesApiUrl = process.env.HERMES_API_URL || 'http://127.0.0.1:8642'
+    try {
+      const healthRes = await fetch(`${hermesApiUrl}/health`)
+      if (healthRes.ok) {
+        res.writeHead(200, { 'Content-Type': 'application/json' })
+        res.end(JSON.stringify({ ok: true, message: 'already running' }))
+        return
+      }
+    } catch {
+      // gateway not reachable
+    }
+    res.writeHead(200, { 'Content-Type': 'application/json' })
+    res.end(JSON.stringify({ ok: false, error: 'Hermes gateway not reachable' }))
+    return
+  }
+
   const headers = new Headers()
   for (const [key, value] of Object.entries(req.headers)) {
     if (value) headers.set(key, Array.isArray(value) ? value.join(', ') : value)
