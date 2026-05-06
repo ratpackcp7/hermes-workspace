@@ -62,6 +62,7 @@ import { Route as ApiConnectionSettingsRouteImport } from './routes/api/connecti
 import { Route as ApiConductorStopRouteImport } from './routes/api/conductor-stop'
 import { Route as ApiConductorSpawnRouteImport } from './routes/api/conductor-spawn'
 import { Route as ApiChatEventsRouteImport } from './routes/api/chat-events'
+import { Route as ApiBobMaintenanceRouteImport } from './routes/api/bob-maintenance'
 import { Route as ApiAuthCheckRouteImport } from './routes/api/auth-check'
 import { Route as ApiAuthRouteImport } from './routes/api/auth'
 import { Route as ApiSkillsUninstallRouteImport } from './routes/api/skills/uninstall'
@@ -362,6 +363,11 @@ const ApiChatEventsRoute = ApiChatEventsRouteImport.update({
   path: '/api/chat-events',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiBobMaintenanceRoute = ApiBobMaintenanceRouteImport.update({
+  id: '/api/bob-maintenance',
+  path: '/api/bob-maintenance',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiAuthCheckRoute = ApiAuthCheckRouteImport.update({
   id: '/api/auth-check',
   path: '/api/auth-check',
@@ -551,6 +557,7 @@ export interface FileRoutesByFullPath {
   '/terminal': typeof TerminalRoute
   '/api/auth': typeof ApiAuthRoute
   '/api/auth-check': typeof ApiAuthCheckRoute
+  '/api/bob-maintenance': typeof ApiBobMaintenanceRoute
   '/api/chat-events': typeof ApiChatEventsRoute
   '/api/conductor-spawn': typeof ApiConductorSpawnRoute
   '/api/conductor-stop': typeof ApiConductorStopRoute
@@ -639,6 +646,7 @@ export interface FileRoutesByTo {
   '/terminal': typeof TerminalRoute
   '/api/auth': typeof ApiAuthRoute
   '/api/auth-check': typeof ApiAuthCheckRoute
+  '/api/bob-maintenance': typeof ApiBobMaintenanceRoute
   '/api/chat-events': typeof ApiChatEventsRoute
   '/api/conductor-spawn': typeof ApiConductorSpawnRoute
   '/api/conductor-stop': typeof ApiConductorStopRoute
@@ -729,6 +737,7 @@ export interface FileRoutesById {
   '/terminal': typeof TerminalRoute
   '/api/auth': typeof ApiAuthRoute
   '/api/auth-check': typeof ApiAuthCheckRoute
+  '/api/bob-maintenance': typeof ApiBobMaintenanceRoute
   '/api/chat-events': typeof ApiChatEventsRoute
   '/api/conductor-spawn': typeof ApiConductorSpawnRoute
   '/api/conductor-stop': typeof ApiConductorStopRoute
@@ -820,6 +829,7 @@ export interface FileRouteTypes {
     | '/terminal'
     | '/api/auth'
     | '/api/auth-check'
+    | '/api/bob-maintenance'
     | '/api/chat-events'
     | '/api/conductor-spawn'
     | '/api/conductor-stop'
@@ -908,6 +918,7 @@ export interface FileRouteTypes {
     | '/terminal'
     | '/api/auth'
     | '/api/auth-check'
+    | '/api/bob-maintenance'
     | '/api/chat-events'
     | '/api/conductor-spawn'
     | '/api/conductor-stop'
@@ -997,6 +1008,7 @@ export interface FileRouteTypes {
     | '/terminal'
     | '/api/auth'
     | '/api/auth-check'
+    | '/api/bob-maintenance'
     | '/api/chat-events'
     | '/api/conductor-spawn'
     | '/api/conductor-stop'
@@ -1087,6 +1099,7 @@ export interface RootRouteChildren {
   TerminalRoute: typeof TerminalRoute
   ApiAuthRoute: typeof ApiAuthRoute
   ApiAuthCheckRoute: typeof ApiAuthCheckRoute
+  ApiBobMaintenanceRoute: typeof ApiBobMaintenanceRoute
   ApiChatEventsRoute: typeof ApiChatEventsRoute
   ApiConductorSpawnRoute: typeof ApiConductorSpawnRoute
   ApiConductorStopRoute: typeof ApiConductorStopRoute
@@ -1518,6 +1531,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiChatEventsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/bob-maintenance': {
+      id: '/api/bob-maintenance'
+      path: '/api/bob-maintenance'
+      fullPath: '/api/bob-maintenance'
+      preLoaderRoute: typeof ApiBobMaintenanceRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/auth-check': {
       id: '/api/auth-check'
       path: '/api/auth-check'
@@ -1867,6 +1887,7 @@ const rootRouteChildren: RootRouteChildren = {
   TerminalRoute: TerminalRoute,
   ApiAuthRoute: ApiAuthRoute,
   ApiAuthCheckRoute: ApiAuthCheckRoute,
+  ApiBobMaintenanceRoute: ApiBobMaintenanceRoute,
   ApiChatEventsRoute: ApiChatEventsRoute,
   ApiConductorSpawnRoute: ApiConductorSpawnRoute,
   ApiConductorStopRoute: ApiConductorStopRoute,

@@ -5,6 +5,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+### Added
+- Bob Maintenance panel on `/operations` backed by read-only `/api/bob-maintenance`, showing Hermes/Bob routine counts, docs-drift status, diagnostics, and runbooks.
+
 ### Changed
 - **`docker compose up` now pulls pre-built images by default** (#82) — `nousresearch/hermes-agent:latest` for the gateway and `ghcr.io/outsourc-e/hermes-workspace:latest` for the UI. Agent state persists in the `hermes-data` named volume. Adds `docker-compose.dev.yml` overlay for building from source.
 

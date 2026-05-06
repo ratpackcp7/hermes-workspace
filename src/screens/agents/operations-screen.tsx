@@ -1,4 +1,5 @@
 import { useEffect, useState, type CSSProperties } from 'react'
+import { useQuery } from '@tanstack/react-query'
 import { motion } from 'motion/react'
 import { seedAgentPresets } from './agent-presets'
 import {
@@ -17,6 +18,31 @@ import { OperationsNewAgentModal } from './components/operations-new-agent-modal
 import { OperationsSettingsModal } from './components/operations-settings-modal'
 import { FullOutputsView } from './components/full-outputs-view'
 import { useOperations } from './hooks/use-operations'
+
+type BobMaintenancePayload = {
+  ok: boolean
+  generatedAt: string
+  jobs: {
+    total: number
+    enabled: number
+    failedLastRun: number
+    neverRun: number
+    docsDriftJobPresent: boolean
+    docsDriftJobEnabled: boolean
+  }
+  diagnostics: string[]
+  runbooks: string[]
+  error?: string
+}
+
+async function fetchBobMaintenance(): Promise<BobMaintenancePayload> {
+  const response = await fetch('/api/bob-maintenance')
+  const payload = (await response.json().catch(() => ({}))) as BobMaintenancePayload
+  if (!response.ok || payload.ok === false) {
+    throw new Error(payload.error || `Failed to load Bob maintenance (${response.status})`)
+  }
+  return payload
+}
 
 export const THEME_STYLE: CSSProperties = {
   ['--theme-bg' as string]: 'var(--color-surface)',
@@ -73,6 +99,12 @@ export function OperationsScreen() {
     (cronJobsQuery.error instanceof Error && cronJobsQuery.error.message) ||
     null
   const settingsAgent = agents.find((agent) => agent.id === settingsAgentId) ?? null
+  const bobMaintenanceQuery = useQuery({
+    queryKey: ['bob-maintenance'],
+    queryFn: fetchBobMaintenance,
+    refetchInterval: 30_000,
+  })
+  const bobMaintenance = bobMaintenanceQuery.data
 
   return (
     <main
@@ -158,6 +190,82 @@ export function OperationsScreen() {
                 totalAgents={agents.length}
               />
             </motion.div>
+
+            <motion.section
+              initial={{ opacity: 0, y: 12 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.04, duration: 0.22 }}
+              className="rounded-3xl border border-[var(--theme-border)] bg-[var(--theme-card)] p-5 shadow-[0_24px_80px_var(--theme-shadow)]"
+            >
+              <div className="flex flex-col gap-3 md:flex-row md:items-start md:justify-between">
+                <div>
+                  <h2 className="text-lg font-semibold text-[var(--theme-text)]">
+                    Bob Maintenance
+                  </h2>
+                  <p className="mt-1 text-sm text-[var(--theme-muted-2)]">
+                    Health, routines, and living-doc checks for the Hermes/Bob stack.
+                  </p>
+                </div>
+                <div className="rounded-2xl border border-[var(--theme-border)] bg-[var(--theme-bg)] px-4 py-3 text-sm text-[var(--theme-muted)]">
+                  Docs drift job:{' '}
+                  <span className="font-medium text-[var(--theme-text)]">
+                    {bobMaintenance?.jobs.docsDriftJobEnabled ? 'enabled' : bobMaintenanceQuery.isPending ? 'loading' : 'not found'}
+                  </span>
+                </div>
+              </div>
+
+              <div className="mt-4 grid grid-cols-1 gap-3 md:grid-cols-3">
+                <div className="rounded-2xl border border-[var(--theme-border)] bg-[var(--theme-bg)] px-4 py-3">
+                  <p className="text-xs uppercase tracking-[0.18em] text-[var(--theme-muted)]">
+                    Enabled routines
+                  </p>
+                  <p className="mt-2 text-2xl font-semibold text-[var(--theme-text)]">
+                    {bobMaintenance?.jobs.enabled ?? 0}
+                  </p>
+                </div>
+                <div className="rounded-2xl border border-[var(--theme-border)] bg-[var(--theme-bg)] px-4 py-3">
+                  <p className="text-xs uppercase tracking-[0.18em] text-[var(--theme-muted)]">
+                    Failed last run
+                  </p>
+                  <p className="mt-2 text-2xl font-semibold text-[var(--theme-text)]">
+                    {bobMaintenance?.jobs.failedLastRun ?? 0}
+                  </p>
+                </div>
+                <div className="rounded-2xl border border-[var(--theme-border)] bg-[var(--theme-bg)] px-4 py-3">
+                  <p className="text-xs uppercase tracking-[0.18em] text-[var(--theme-muted)]">
+                    Never run yet
+                  </p>
+                  <p className="mt-2 text-2xl font-semibold text-[var(--theme-text)]">
+                    {bobMaintenance?.jobs.neverRun ?? 0}
+                  </p>
+                </div>
+              </div>
+
+              <div className="mt-4 grid grid-cols-1 gap-3 lg:grid-cols-2">
+                <div className="rounded-2xl border border-[var(--theme-border)] bg-[var(--theme-bg)] px-4 py-3">
+                  <h3 className="text-sm font-semibold text-[var(--theme-text)]">
+                    Diagnostics
+                  </h3>
+                  <div className="mt-3 space-y-2 font-mono text-xs text-[var(--theme-muted)]">
+                    <p>/home/chris/cp7-bridge/scripts/bob-health.sh</p>
+                    <p>/home/chris/scripts/cron-health.py</p>
+                    <p>/home/chris/scripts/bob-docs-drift-check.py</p>
+                    <p>/home/chris/scripts/bob-maintenance-preflight.sh</p>
+                  </div>
+                </div>
+                <div className="rounded-2xl border border-[var(--theme-border)] bg-[var(--theme-bg)] px-4 py-3">
+                  <h3 className="text-sm font-semibold text-[var(--theme-text)]">
+                    Runbooks
+                  </h3>
+                  <div className="mt-3 space-y-2 font-mono text-xs text-[var(--theme-muted)]">
+                    <p>/home/chris/wiki/projects/hermes-known-good-state.md</p>
+                    <p>/home/chris/wiki/runbooks/hermes-known-failures.md</p>
+                    <p>/home/chris/wiki/concepts/bob-operating-model.md</p>
+                    <p>/home/chris/wiki/projects/bob-improvement-backlog.md</p>
+                  </div>
+                </div>
+              </div>
+            </motion.section>
 
             <section className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3">
               {agents.map((agent, index) => (
