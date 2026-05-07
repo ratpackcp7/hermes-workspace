@@ -1,6 +1,10 @@
 # AGENTS.md — Hermes Workspace
 
-React/TanStack Start frontend for Hermes Agent. Chat interface, memory browser, skills explorer, terminal, and orchestration UI — all in one workspace. Connects to the Hermes gateway via SSE.
+## Purpose
+
+React/TanStack Start frontend for Hermes Agent. Provides a unified workspace with chat interface, memory browser, skills explorer, terminal, and orchestration UI. Connects to the Hermes gateway via SSE streaming.
+
+Serves as the primary web interface for interacting with Bob (Hermes agent), viewing session history, and managing agent skills and memory. Accessed directly via Tailscale at port 3002.
 
 ## Before You Start
 
@@ -64,9 +68,25 @@ docker compose up
 - **Hermes gateway** (`localhost:8642`) — all chat, memory, skills, jobs, sessions. Workspace is non-functional without it.
 - **Honcho** (`localhost:8000`) — memory backend, accessed via gateway
 
+## Agents and Crons
+
+None.
+
+## Gotchas
+
+- Workspace is non-functional without Hermes gateway running at `localhost:8642`.
+- SSE streaming requires a live gateway connection — dropped connections manifest as silent chat failures.
+- `pnpm build` must succeed before tagging a release.
+- Do not commit to `main` directly — work on feature branches.
+
 ## Active Work
 
 See `HANDOFF.md` for current work status and next steps.
+
+## Decisions
+
+See docs/decisions/.
+No ADRs exist yet.
 
 ## Rules
 - One commit per task
