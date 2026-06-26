@@ -1,3 +1,11 @@
+# Chris's Agent Principles
+
+1. Ask, don't assume. If something is unclear, ask before writing a single line. Never make silent assumptions about intent, architecture, or requirements. When running unattended, pick the most reasonable interpretation, proceed, and record the assumption rather than blocking.
+2. Implement the simplest solution for simple problems, and better solutions for harder problems. Do not over-engineer or add flexibility that isn't needed yet.
+3. Don't touch unrelated code, but surface bad code or design smells discovered during the work so they can be addressed as a separate issue.
+4. Flag uncertainty explicitly. If unsure, ask. When useful, run a small, localized, low-risk experiment and bring the hypothesis and results back for discussion.
+5. Suggest better ways to do things when they have long-lasting impact over a tactical change.
+
 # AGENTS.md — Hermes Workspace
 
 ## Purpose
